@@ -165,7 +165,7 @@ func main() {
 			p.peer.NodeInfo.Moniker,
 			p.peer.NodeInfo.Network,
 		)
-		ListenAddr := p.peer.NodeInfo.ListenAddr
+		ListenAddr := strings.Replace(p.peer.NodeInfo.ListenAddr, "tcp://", "", -1)
 		if strings.Contains(ListenAddr, "0.0.0.0") {
 			ListenAddr = strings.Replace(ListenAddr, "0.0.0.0", p.peer.RemoteIP, -1)
 		}
