@@ -6,6 +6,7 @@ import (
 	log "github.com/sirupsen/logrus"
 	"io"
 	"net/http"
+	"os"
 	"sort"
 	"strconv"
 	"strings"
@@ -155,14 +156,28 @@ func main() {
 	}
 	topPeers := peersWithBytes[:topCount]
 
+	var resultFile string
 	log.Infof("Top %d peers by bytes transferred:", topCount)
-	for _, p := range topPeers {
+	for idx, p := range topPeers {
 		log.Infof("Peer: %s, TotalBytes: %d, Moniker: %s, Network: %s",
 			p.peer.RemoteIP,
 			p.totalBytes,
 			p.peer.NodeInfo.Moniker,
 			p.peer.NodeInfo.Network,
 		)
+		ListenAddr := p.peer.NodeInfo.ListenAddr
+		if strings.Contains(ListenAddr, "0.0.0.0") {
+			ListenAddr = strings.Replace(ListenAddr, "0.0.0.0", p.peer.RemoteIP, -1)
+		}
+		resultFile = fmt.Sprintf("%s@%s", p.peer.NodeInfo.DefaultNodeID, ListenAddr)
+		if idx < len(topPeers)-1 {
+			resultFile = fmt.Sprintf("%s,", resultFile)
+		}
+	}
+
+	err = os.WriteFile("peers.txt", []byte(resultFile), 0644)
+	if err != nil {
+		log.Fatalf("Error writing result file: %v", err)
 	}
 }
 
