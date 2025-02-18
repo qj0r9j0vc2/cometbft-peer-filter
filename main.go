@@ -169,7 +169,7 @@ func main() {
 		if strings.Contains(ListenAddr, "0.0.0.0") {
 			ListenAddr = strings.Replace(ListenAddr, "0.0.0.0", p.peer.RemoteIP, -1)
 		}
-		resultFile = fmt.Sprintf("%s@%s", p.peer.NodeInfo.DefaultNodeID, ListenAddr)
+		resultFile = fmt.Sprintf("%s%s@%s", resultFile, p.peer.NodeInfo.DefaultNodeID, ListenAddr)
 		if idx < len(topPeers)-1 {
 			resultFile = fmt.Sprintf("%s,", resultFile)
 		}
